@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
 namespace WebApi.Models;
@@ -15,17 +16,26 @@ public class EktacoContext : DbContext
     {
     }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder builder)
     {
-        base.OnModelCreating(modelBuilder);
+        base.OnModelCreating(builder);
 
-        modelBuilder
+        //eager load navigation properties
+        builder.Entity<Product>().Navigation(x => x.ProductGroup).AutoInclude();
+        builder.Entity<Product>().Navigation(x => x.Stores).AutoInclude();
+        builder.Entity<ProductGroup>().Navigation(x => x.Parent).AutoInclude();
+
+        builder
             .Entity<Store>()
             .HasMany(x => x.Products)
             .WithMany(x => x.Stores)
             .UsingEntity(j => j.ToTable("StoreProducts"));
-        
-        
+
+        InsertSampleData(builder);
+    }
+
+    private void InsertSampleData(ModelBuilder modelBuilder)
+    {
         modelBuilder.Entity<ProductGroup>().HasData(
             new ProductGroup { Id = 1, Name = "Group 1" },
             new ProductGroup { Id = 2, Name = "Group 2" },
@@ -35,9 +45,10 @@ public class EktacoContext : DbContext
             new ProductGroup { Id = 6, Name = "Group 2-6", ParentId = 2 }
         );
 
+        var now = DateTime.Now;
         modelBuilder.Entity<Product>().HasData(
-            new Product { Id = 1, Name = "Product 1", ProductGroupId = 1, },
-            new Product { Id = 2, Name = "Product 2", ProductGroupId = 1, }
+            new Product { Id = 1, Name = "Product 1", ProductGroupId = 1, CreatedAt = now},
+            new Product { Id = 2, Name = "Product 2", ProductGroupId = 1, CreatedAt = now}
         );
 
         modelBuilder.Entity<Store>().HasData(
@@ -58,22 +69,17 @@ public class EktacoContext : DbContext
     }
 }
 
-public class Store
-{
-    [Key] public int Id { get; set; }
-    public string Name { get; set; } = null!;
-    public List<Product> Products { get; set; } = new();
-}
-
 public class Product
 {
     [Key] public int Id { get; set; }
     public int ProductGroupId { get; set; }
+    [ForeignKey(nameof(ProductGroupId))]
     public ProductGroup ProductGroup { get; set; } = null!;
     public string Name { get; set; } = null!;
     public decimal Price { get; set; }
     public decimal PriceWithVat { get; set; }
     public decimal VatRate { get; set; }
+    public DateTime CreatedAt { get; set; }
     public List<Store> Stores { get; set; } = new();
 }
 
@@ -82,7 +88,15 @@ public class ProductGroup
     [Key] public int Id { get; set; }
     public string Name { get; set; } = null!;
     public int? ParentId { get; set; }
+    [ForeignKey(nameof(ParentId))]
     public ProductGroup? Parent { get; set; }
     public List<ProductGroup> SubGroups { get; set; } = new();
+    public List<Product> Products { get; set; } = new();
+}
+
+public class Store
+{
+    [Key] public int Id { get; set; }
+    public string Name { get; set; } = null!;
     public List<Product> Products { get; set; } = new();
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -54,7 +55,8 @@ namespace WebApi.Migrations
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     Price = table.Column<decimal>(type: "TEXT", nullable: false),
                     PriceWithVat = table.Column<decimal>(type: "TEXT", nullable: false),
-                    VatRate = table.Column<decimal>(type: "TEXT", nullable: false)
+                    VatRate = table.Column<decimal>(type: "TEXT", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -123,11 +125,11 @@ namespace WebApi.Migrations
 
             migrationBuilder.InsertData(
                 table: "Products",
-                columns: new[] { "Id", "Name", "Price", "PriceWithVat", "ProductGroupId", "VatRate" },
+                columns: new[] { "Id", "CreatedAt", "Name", "Price", "PriceWithVat", "ProductGroupId", "VatRate" },
                 values: new object[,]
                 {
-                    { 1, "Product 1", 0m, 0m, 1, 0m },
-                    { 2, "Product 2", 0m, 0m, 1, 0m }
+                    { 1, new DateTime(2023, 2, 22, 21, 53, 56, 768, DateTimeKind.Local).AddTicks(3030), "Product 1", 0m, 0m, 1, 0m },
+                    { 2, new DateTime(2023, 2, 22, 21, 53, 56, 768, DateTimeKind.Local).AddTicks(3030), "Product 2", 0m, 0m, 1, 0m }
                 });
 
             migrationBuilder.InsertData(

@@ -11,7 +11,7 @@ using WebApi.Models;
 namespace WebApi.Migrations
 {
     [DbContext(typeof(EktacoContext))]
-    [Migration("20230222153515_InitialCreate")]
+    [Migration("20230222195356_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -53,6 +53,9 @@ namespace WebApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -79,6 +82,7 @@ namespace WebApi.Migrations
                         new
                         {
                             Id = 1,
+                            CreatedAt = new DateTime(2023, 2, 22, 21, 53, 56, 768, DateTimeKind.Local).AddTicks(3030),
                             Name = "Product 1",
                             Price = 0m,
                             PriceWithVat = 0m,
@@ -88,6 +92,7 @@ namespace WebApi.Migrations
                         new
                         {
                             Id = 2,
+                            CreatedAt = new DateTime(2023, 2, 22, 21, 53, 56, 768, DateTimeKind.Local).AddTicks(3030),
                             Name = "Product 2",
                             Price = 0m,
                             PriceWithVat = 0m,
