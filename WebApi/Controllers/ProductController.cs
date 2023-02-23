@@ -28,7 +28,7 @@ public class ProductController : ControllerBase
                     Price = x.Price,
                     PriceWithVat = x.PriceWithVat,
                     VatRate = x.VatRate,
-                    Stores = x.Stores.Select(y => new StoreDto(y.Name)).ToList()
+                    Stores = x.Stores.Select(y => y.Name).ToList()
                 }).ToList();
             }
             case <= 0:
@@ -48,7 +48,7 @@ public class ProductController : ControllerBase
                 Price = p.Price,
                 PriceWithVat = p.PriceWithVat,
                 VatRate = p.VatRate,
-                Stores = p.Stores.Select(x => new StoreDto(x.Name)).ToList()
+                Stores = p.Stores.Select(x => x.Name).ToList()
             }
         };
     }

@@ -20,11 +20,6 @@ public class EktacoContext : DbContext
     {
         base.OnModelCreating(builder);
 
-        //eager load navigation properties
-        builder.Entity<Product>().Navigation(x => x.ProductGroup).AutoInclude();
-        builder.Entity<Product>().Navigation(x => x.Stores).AutoInclude();
-        //builder.Entity<ProductGroup>().Navigation(x => x.Parent).AutoInclude();
-
         builder
             .Entity<Store>()
             .HasMany(x => x.Products)
@@ -42,7 +37,8 @@ public class EktacoContext : DbContext
             new ProductGroup { Id = 3, Name = "Group 1-3", ParentId = 1 },
             new ProductGroup { Id = 4, Name = "Group 1-4", ParentId = 1 },
             new ProductGroup { Id = 5, Name = "Group 2-5", ParentId = 2 },
-            new ProductGroup { Id = 6, Name = "Group 2-6", ParentId = 2 }
+            new ProductGroup { Id = 6, Name = "Group 2-6", ParentId = 2 },
+            new ProductGroup { Id = 7, Name = "Group 3-7", ParentId = 3 }
         );
 
         var now = DateTime.Now;

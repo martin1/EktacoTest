@@ -15,6 +15,7 @@ builder.Services.AddDbContext<EktacoContext>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IProductGroupService, ProductGroupService>();
 
 var app = builder.Build();
 

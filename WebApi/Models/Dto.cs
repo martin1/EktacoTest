@@ -1,5 +1,3 @@
-using Microsoft.Extensions.Options;
-
 namespace WebApi.Models;
 
 public class ProductBaseDto
@@ -14,7 +12,7 @@ public class ProductBaseDto
 public class GetProductDto : ProductBaseDto
 {
     public string ProductGroupName { get; init; } = null!;
-    public List<StoreDto> Stores { get; init; } = new();
+    public List<string> Stores { get; init; } = new();
 }
 
 public class AddProductDto : ProductBaseDto
@@ -23,4 +21,11 @@ public class AddProductDto : ProductBaseDto
     public List<int> StoreIds { get; init; } = new();
 }
 
-public record StoreDto(string Name);
+public class ProductGroupDto
+{
+    public int Id { get; init; }
+    public string Name { get; init; } = null!;
+    public int? ParentId { get; init; }
+    public List<ProductGroupDto> Subgroups { get; init; } = new();
+
+}

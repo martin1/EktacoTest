@@ -6,23 +6,27 @@ namespace WebApi.Services;
 
 public class ProductService : IProductService
 {
-    private readonly EktacoContext _context;
+    private readonly EktacoContext _db;
     
-    public ProductService(EktacoContext context)
-    {
-        _context = context;
-    }
+    public ProductService(EktacoContext db) =>  _db = db;
 
-    public async Task<Product?> FindAsync(int id) => await _context.Products.FindAsync(id);
+    public async Task<Product?> FindAsync(int id) => await _db.Products
+        .Include(x => x.ProductGroup)
+        .Include(x => x.Stores)
+        .FirstOrDefaultAsync(x => x.Id == id);
 
-    public async Task<List<Product>> FindAllAsync() => await _context.Products.ToListAsync();
+    public async Task<List<Product>> FindAllAsync() => await _db.Products
+        .Include(x => x.ProductGroup)
+        .Include(x => x.Stores)
+        .ToListAsync();
+    
     public async Task<int> AddAsync(AddProductDto p)
     {
         var product = await ValidateAsync(p);
         if (product is null) return 0;
 
-        await _context.Products.AddAsync(product);
-        await _context.SaveChangesAsync();
+        await _db.Products.AddAsync(product);
+        await _db.SaveChangesAsync();
         return product.Id;
     }
     
@@ -75,13 +79,13 @@ public class ProductService : IProductService
             }
         }
 
-        var productGroup = await _context.ProductGroups.FindAsync(p.ProductGroupId);
+        var productGroup = await _db.ProductGroups.FindAsync(p.ProductGroupId);
         if (productGroup is null) return null;
 
         List<Store> stores = new();
         if (p.StoreIds.Any())
         {
-            stores = await _context.Stores.Where(x => p.StoreIds.Contains(x.Id)).ToListAsync();
+            stores = await _db.Stores.Where(x => p.StoreIds.Contains(x.Id)).ToListAsync();
             if (stores.Count < p.StoreIds.Count) return null;
         }
 
