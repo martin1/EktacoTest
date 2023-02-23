@@ -23,7 +23,7 @@ public class EktacoContext : DbContext
         //eager load navigation properties
         builder.Entity<Product>().Navigation(x => x.ProductGroup).AutoInclude();
         builder.Entity<Product>().Navigation(x => x.Stores).AutoInclude();
-        builder.Entity<ProductGroup>().Navigation(x => x.Parent).AutoInclude();
+        //builder.Entity<ProductGroup>().Navigation(x => x.Parent).AutoInclude();
 
         builder
             .Entity<Store>()

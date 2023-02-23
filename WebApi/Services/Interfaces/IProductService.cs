@@ -13,4 +13,9 @@ public interface IProductService
     /// Returns all products
     /// </summary>
     Task<List<Product>> FindAllAsync();
+
+    /// <summary>
+    /// Creates a new product, if successful, returns its ID
+    /// </summary>
+    Task<int> AddAsync(AddProductDto product);
 }
