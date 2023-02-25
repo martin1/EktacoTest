@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using WebApi.Models;
 using WebApi.Services.Interfaces;
 
@@ -12,20 +11,33 @@ public class ProductGroupService : IProductGroupService
 
     public async Task<ProductGroupDto?> GetTree(int id)
     {
-        var g = await Get(id);
-        return g is null ? null : ToDto(g);
+        if (id <= 0) return null;
+        var groups = await _db.GetGroupHierarchy(id);
+        return BuildTree(id, groups);
     }
 
-    private static ProductGroupDto ToDto(ProductGroup pg) => new ProductGroupDto
+    private static ProductGroupDto? BuildTree(int id, List<ProductGroupDto> groups)
     {
-        Id = pg.Id,
-        ParentId = pg.ParentId,
-        Name = pg.Name,
-        Subgroups = pg.SubGroups.Select(ToDto).ToList()
-    };
+        var g = groups.FirstOrDefault(x => x.Id == id);
+        if (g is null) return null;
 
-    private async Task<ProductGroup?> Get(int id) => await _db.ProductGroups
-        .Include(x => x.Parent)
-        .Include(x => x.SubGroups)
-        .FirstOrDefaultAsync(x => x.Id == id);
+        var d = groups.Where(x => x.Id != id)
+            .GroupBy(x => x.ParentId!.Value)
+            .ToDictionary(x => x.Key, x => x.ToList());
+
+        PopulateSubgroups(g, d);
+
+        return g;
+    }
+
+    private static void PopulateSubgroups(ProductGroupDto pg, IReadOnlyDictionary<int, List<ProductGroupDto>> d)
+    {
+        if (!d.TryGetValue(pg.Id, out var subgroups)) return;
+
+        foreach (var sg in subgroups)
+        {
+            pg.Subgroups.Add(sg);
+            PopulateSubgroups(sg, d);
+        }
+    }
 }

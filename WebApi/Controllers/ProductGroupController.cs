@@ -12,12 +12,10 @@ public class ProductGroupController : ControllerBase
 
     public ProductGroupController(IProductGroupService productGroupService) => _productGroupService = productGroupService;
 
-    [HttpGet]
+    [HttpGet("{id}")]
     public async Task<ActionResult<ProductGroupDto>> GetTree(int id)
     {
         var g = await _productGroupService.GetTree(id);
-        if (g is null) return NotFound();
-
-        return g;
+        return g is null ? NotFound() : g;
     }
 }
