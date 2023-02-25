@@ -27,5 +27,12 @@ public class ProductGroupDto
     public string Name { get; init; } = null!;
     public int? ParentId { get; init; }
     public List<ProductGroupDto> Subgroups { get; init; } = new();
+}
 
+public enum AddProductError
+{
+    None,
+    ProductGroupInvalid,
+    PriceVatValuesInvalid,
+    StoresInvalid
 }

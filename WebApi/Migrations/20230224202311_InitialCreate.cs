@@ -128,9 +128,14 @@ namespace WebApi.Migrations
                 columns: new[] { "Id", "CreatedAt", "Name", "Price", "PriceWithVat", "ProductGroupId", "VatRate" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2023, 2, 22, 21, 53, 56, 768, DateTimeKind.Local).AddTicks(3030), "Product 1", 0m, 0m, 1, 0m },
-                    { 2, new DateTime(2023, 2, 22, 21, 53, 56, 768, DateTimeKind.Local).AddTicks(3030), "Product 2", 0m, 0m, 1, 0m }
+                    { 1, new DateTime(2023, 2, 24, 22, 23, 11, 455, DateTimeKind.Local).AddTicks(5980), "Product 1", 0m, 0m, 1, 0m },
+                    { 2, new DateTime(2023, 2, 24, 22, 23, 11, 455, DateTimeKind.Local).AddTicks(5980), "Product 2", 0m, 0m, 1, 0m }
                 });
+
+            migrationBuilder.InsertData(
+                table: "ProductGroups",
+                columns: new[] { "Id", "Name", "ParentId" },
+                values: new object[] { 7, "Group 3-7", 3 });
 
             migrationBuilder.InsertData(
                 table: "StoreProducts",

@@ -56,8 +56,13 @@ public class ProductController : ControllerBase
     [HttpPost]
     public async Task<ActionResult> AddProduct(AddProductDto p)
     {
-        var id = await _productService.AddAsync(p);
-        var okResp = new { Id = id };
-        return id > 0 ? Ok(okResp) : UnprocessableEntity();
+        var (id, error) = await _productService.TryAddAsync(p);
+
+        if (error is AddProductError.None)
+        {
+            return Ok(new { Id = id });
+        }
+
+        return UnprocessableEntity(error.ToString());
     }
 }

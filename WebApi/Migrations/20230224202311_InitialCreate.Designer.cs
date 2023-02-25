@@ -11,7 +11,7 @@ using WebApi.Models;
 namespace WebApi.Migrations
 {
     [DbContext(typeof(EktacoContext))]
-    [Migration("20230222195356_InitialCreate")]
+    [Migration("20230224202311_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -82,7 +82,7 @@ namespace WebApi.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2023, 2, 22, 21, 53, 56, 768, DateTimeKind.Local).AddTicks(3030),
+                            CreatedAt = new DateTime(2023, 2, 24, 22, 23, 11, 455, DateTimeKind.Local).AddTicks(5980),
                             Name = "Product 1",
                             Price = 0m,
                             PriceWithVat = 0m,
@@ -92,7 +92,7 @@ namespace WebApi.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2023, 2, 22, 21, 53, 56, 768, DateTimeKind.Local).AddTicks(3030),
+                            CreatedAt = new DateTime(2023, 2, 24, 22, 23, 11, 455, DateTimeKind.Local).AddTicks(5980),
                             Name = "Product 2",
                             Price = 0m,
                             PriceWithVat = 0m,
@@ -154,6 +154,12 @@ namespace WebApi.Migrations
                             Id = 6,
                             Name = "Group 2-6",
                             ParentId = 2
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Name = "Group 3-7",
+                            ParentId = 3
                         });
                 });
 

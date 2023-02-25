@@ -20,19 +20,28 @@ public class ProductService : IProductService
         .Include(x => x.Stores)
         .ToListAsync();
     
-    public async Task<int> AddAsync(AddProductDto p)
+    public async Task<(int AddedProductId, AddProductError Error)> TryAddAsync(AddProductDto p)
     {
-        var product = await ValidateAsync(p);
-        if (product is null) return 0;
+        var (product, error) = await ValidateAsync(p);
+
+        if (error is not AddProductError.None || product is null) return (0, error);
 
         await _db.Products.AddAsync(product);
         await _db.SaveChangesAsync();
-        return product.Id;
+        return (product.Id, AddProductError.None);
     }
     
-    private async Task<Product?> ValidateAsync(AddProductDto p)
+    private async Task<(Product? Product, AddProductError Error)> ValidateAsync(AddProductDto p)
     {
-        if (p.Price <= 0 || p.ProductGroupId <= 0) return null;
+        if (p is not { ProductGroupId: > 0 })
+        {
+            return (null, AddProductError.ProductGroupInvalid);
+        }
+
+        if (p.Price <= 0 || p.PriceWithVat <= 0 || p.VatRate <= 0)
+        {
+            return (null, AddProductError.PriceVatValuesInvalid);
+        }
 
         decimal price;
         decimal priceWithVat;
@@ -42,7 +51,7 @@ public class ProductService : IProductService
         switch (priceValues)
         {
             case < 2:
-                return null;
+                return (null, AddProductError.PriceVatValuesInvalid);
             case 2:
                 switch (p)
                 {
@@ -72,7 +81,7 @@ public class ProductService : IProductService
                 var expectedPriceWithVat = Round(p.PriceWithVat!.Value);
             
                 var calculatedPriceWithVat = Round(price * (1 + vatRate));
-                if (calculatedPriceWithVat != expectedPriceWithVat) return null;
+                if (calculatedPriceWithVat != expectedPriceWithVat) return (null, AddProductError.PriceVatValuesInvalid);
 
                 priceWithVat = calculatedPriceWithVat;
                 break;
@@ -80,16 +89,16 @@ public class ProductService : IProductService
         }
 
         var productGroup = await _db.ProductGroups.FindAsync(p.ProductGroupId);
-        if (productGroup is null) return null;
+        if (productGroup is null) return (null, AddProductError.ProductGroupInvalid);
 
         List<Store> stores = new();
         if (p.StoreIds.Any())
         {
             stores = await _db.Stores.Where(x => p.StoreIds.Contains(x.Id)).ToListAsync();
-            if (stores.Count < p.StoreIds.Count) return null;
+            if (stores.Count < p.StoreIds.Count) return (null, AddProductError.StoresInvalid);
         }
 
-        return new Product
+        var product = new Product
         {
             Name = p.Name,
             Price = price,
@@ -99,6 +108,7 @@ public class ProductService : IProductService
             CreatedAt = DateTime.Now,
             Stores = stores
         };
+        return (product, AddProductError.None);
     }
 
     private static decimal Round(decimal value) => Math.Round(value, 2, MidpointRounding.AwayFromZero);

@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
 namespace WebApi.Models;
@@ -11,10 +10,33 @@ public class EktacoContext : DbContext
     public DbSet<Product> Products { get; set; } = null!;
     public DbSet<ProductGroup> ProductGroups { get; set; } = null!;
     public DbSet<Store> Stores { get; set; } = null!;
-    
+
     public EktacoContext(DbContextOptions options) : base(options)
     {
     }
+
+    public async Task<List<ProductGroupDto>> GetGroupHierarchy(int id) => await ProductGroups.FromSqlRaw(
+            """
+                with cte_groups (Id, Name, ParentId) as (
+                            select Id, Name, ParentId
+                            from ProductGroups
+                            where ProductGroups.Id = {0}
+                            union all
+                            select pg.Id, pg.Name, pg.ParentId
+                            from ProductGroups PG 
+                            join cte_groups g
+                            on g.Id = pg.ParentId
+                            )
+                            select * from cte_groups
+                """, id)
+        .AsNoTrackingWithIdentityResolution()
+        .Select(x => new ProductGroupDto
+        {
+            Id = x.Id,
+            ParentId = x.ParentId,
+            Name = x.Name,
+            Subgroups = new()
+        }).ToListAsync();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -43,21 +65,21 @@ public class EktacoContext : DbContext
 
         var now = DateTime.Now;
         modelBuilder.Entity<Product>().HasData(
-            new Product { Id = 1, Name = "Product 1", ProductGroupId = 1, CreatedAt = now},
-            new Product { Id = 2, Name = "Product 2", ProductGroupId = 1, CreatedAt = now}
+            new Product { Id = 1, Name = "Product 1", ProductGroupId = 1, CreatedAt = now },
+            new Product { Id = 2, Name = "Product 2", ProductGroupId = 1, CreatedAt = now }
         );
 
         modelBuilder.Entity<Store>().HasData(
-            new Store {Id = 1, Name = "Store 1"},
-            new Store {Id = 2, Name = "Store 2"},
-            new Store {Id = 3, Name = "Store 3"}
+            new Store { Id = 1, Name = "Store 1" },
+            new Store { Id = 2, Name = "Store 2" },
+            new Store { Id = 3, Name = "Store 3" }
         );
 
         modelBuilder.Entity<Store>()
             .HasMany(x => x.Products)
             .WithMany(x => x.Stores)
             .UsingEntity(x => x.HasData(new { StoresId = 1, ProductsId = 1 }));
-        
+
         modelBuilder.Entity<Store>()
             .HasMany(x => x.Products)
             .WithMany(x => x.Stores)
@@ -69,7 +91,6 @@ public class Product
 {
     [Key] public int Id { get; set; }
     public int ProductGroupId { get; set; }
-    [ForeignKey(nameof(ProductGroupId))]
     public ProductGroup ProductGroup { get; set; } = null!;
     public string Name { get; set; } = null!;
     public decimal Price { get; set; }
@@ -84,7 +105,6 @@ public class ProductGroup
     [Key] public int Id { get; set; }
     public string Name { get; set; } = null!;
     public int? ParentId { get; set; }
-    [ForeignKey(nameof(ParentId))]
     public ProductGroup? Parent { get; set; }
     public List<ProductGroup> SubGroups { get; set; } = new();
     public List<Product> Products { get; set; } = new();

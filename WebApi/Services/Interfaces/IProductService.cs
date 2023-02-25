@@ -15,7 +15,7 @@ public interface IProductService
     Task<List<Product>> FindAllAsync();
 
     /// <summary>
-    /// Creates a new product, if successful, returns its ID
+    /// Creates a new product. If successful, returns its ID, otherwise returns an error.
     /// </summary>
-    Task<int> AddAsync(AddProductDto product);
+    Task<(int AddedProductId, AddProductError Error)> TryAddAsync(AddProductDto product);
 }
