@@ -5,7 +5,8 @@ namespace WebApi.Services.Interfaces;
 public interface IProductGroupService
 {
     /// <summary>
-    /// Return product group and its subgroups as a tree
+    /// Returns product group and its subgroups as a tree
+    /// If id is not provided then returns all product groups
     /// </summary>
-    public Task<ProductGroupDto?> GetTree(int id);
+    public Task<List<ProductGroupDto>> GetTree(int? id);
 }

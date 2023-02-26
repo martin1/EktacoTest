@@ -18,7 +18,7 @@ public class GetProductDto : ProductBaseDto
 public class AddProductDto : ProductBaseDto
 {
     public int ProductGroupId { get; init; }
-    public List<int> StoreIds { get; init; } = new();
+    public List<int> StoreIds { get; } = new();
 }
 
 public class ProductGroupDto
@@ -32,7 +32,8 @@ public class ProductGroupDto
 public enum AddProductError
 {
     None,
+    NameInvalid,
     ProductGroupInvalid,
     PriceVatValuesInvalid,
-    StoresInvalid
+    StoresInvalid,
 }

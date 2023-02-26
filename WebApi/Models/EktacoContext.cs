@@ -15,7 +15,7 @@ public class EktacoContext : DbContext
     {
     }
 
-    public async Task<List<ProductGroupDto>> GetGroupHierarchy(int id) => await ProductGroups.FromSqlRaw(
+    public IQueryable<ProductGroup> GroupTreeQueryable(int id) => ProductGroups.FromSqlRaw(
             """
                 with cte_groups (Id, Name, ParentId) as (
                             select Id, Name, ParentId
@@ -29,14 +29,7 @@ public class EktacoContext : DbContext
                             )
                             select * from cte_groups
                 """, id)
-        .AsNoTrackingWithIdentityResolution()
-        .Select(x => new ProductGroupDto
-        {
-            Id = x.Id,
-            ParentId = x.ParentId,
-            Name = x.Name,
-            Subgroups = new()
-        }).ToListAsync();
+        .AsNoTrackingWithIdentityResolution();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
