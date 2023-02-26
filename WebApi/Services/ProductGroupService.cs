@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using WebApi.Models;
 using WebApi.Services.Interfaces;
 
@@ -9,35 +10,41 @@ public class ProductGroupService : IProductGroupService
 
     public ProductGroupService(EktacoContext db) => _db = db;
 
-    public async Task<ProductGroupDto?> GetTree(int id)
+    public async Task<List<ProductGroupDto>> GetTree(int? id)
     {
-        if (id <= 0) return null;
-        var groups = await _db.GetGroupHierarchy(id);
-        return BuildTree(id, groups);
-    }
+        var groups = id > 0
+            ? await _db.GroupTreeQueryable(id.Value).Select(x => ToDto(x)).ToListAsync()
+            : await _db.ProductGroups.Select(x => ToDto(x)).ToListAsync();
 
-    private static ProductGroupDto? BuildTree(int id, List<ProductGroupDto> groups)
-    {
-        var g = groups.FirstOrDefault(x => x.Id == id);
-        if (g is null) return null;
-
-        var d = groups.Where(x => x.Id != id)
+        if (!groups.Any()) return new();
+        
+        var sgDict = groups.Where(x => x.ParentId is not null)
             .GroupBy(x => x.ParentId!.Value)
             .ToDictionary(x => x.Key, x => x.ToList());
 
-        PopulateSubgroups(g, d);
-
-        return g;
+        return groups.Where(x => x.Id > 0 && x.Id == id || x.ParentId is null)
+            .Select(x => PopulateSubgroups(x, sgDict))
+            .ToList();
     }
 
-    private static void PopulateSubgroups(ProductGroupDto pg, IReadOnlyDictionary<int, List<ProductGroupDto>> d)
+    private static ProductGroupDto ToDto(ProductGroup pg) => new()
     {
-        if (!d.TryGetValue(pg.Id, out var subgroups)) return;
+        Id = pg.Id,
+        ParentId = pg.ParentId,
+        Name = pg.Name,
+        Subgroups = new()
+    };
+
+    private static ProductGroupDto PopulateSubgroups(ProductGroupDto pg, IReadOnlyDictionary<int, List<ProductGroupDto>> d)
+    {
+        if (!d.TryGetValue(pg.Id, out var subgroups)) return pg;
 
         foreach (var sg in subgroups)
         {
             pg.Subgroups.Add(sg);
             PopulateSubgroups(sg, d);
         }
+
+        return pg;
     }
 }

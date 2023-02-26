@@ -6,9 +6,12 @@ namespace WebApi.Services;
 
 public class ProductService : IProductService
 {
+    private const decimal MinSupportedVatRate = 0;
+    private const decimal MaxSupportedVatRate = 0.2m;
+
     private readonly EktacoContext _db;
-    
-    public ProductService(EktacoContext db) =>  _db = db;
+
+    public ProductService(EktacoContext db) => _db = db;
 
     public async Task<Product?> FindAsync(int id) => await _db.Products
         .Include(x => x.ProductGroup)
@@ -19,7 +22,7 @@ public class ProductService : IProductService
         .Include(x => x.ProductGroup)
         .Include(x => x.Stores)
         .ToListAsync();
-    
+
     public async Task<(int AddedProductId, AddProductError Error)> TryAddAsync(AddProductDto p)
     {
         var (product, error) = await ValidateAsync(p);
@@ -30,15 +33,25 @@ public class ProductService : IProductService
         await _db.SaveChangesAsync();
         return (product.Id, AddProductError.None);
     }
-    
+
     private async Task<(Product? Product, AddProductError Error)> ValidateAsync(AddProductDto p)
     {
-        if (p is not { ProductGroupId: > 0 })
+        if (string.IsNullOrWhiteSpace(p.Name))
+        {
+            return (null, AddProductError.NameInvalid);
+        }
+
+        if (p.ProductGroupId <= 0)
         {
             return (null, AddProductError.ProductGroupInvalid);
         }
 
-        if (p.Price <= 0 || p.PriceWithVat <= 0 || p.VatRate <= 0)
+        if (p.StoreIds.Any() && !p.StoreIds.All(x => x > 0))
+        {
+            return (null, AddProductError.StoresInvalid);
+        }
+
+        if (p.Price <= 0 || p.PriceWithVat <= 0 || p.VatRate < MinSupportedVatRate || p.VatRate > MaxSupportedVatRate)
         {
             return (null, AddProductError.PriceVatValuesInvalid);
         }
@@ -46,9 +59,9 @@ public class ProductService : IProductService
         decimal price;
         decimal priceWithVat;
         decimal vatRate;
-        
-        var priceValues = new[] { p.PriceWithVat, p.Price, p.VatRate }.Count(x => x > 0);
-        switch (priceValues)
+
+        var priceVatValues = new[] { p.PriceWithVat, p.Price, p.VatRate }.Count(x => x > 0);
+        switch (priceVatValues)
         {
             case < 2:
                 return (null, AddProductError.PriceVatValuesInvalid);
@@ -71,32 +84,39 @@ public class ProductService : IProductService
                         price = priceWithVat / (1 + vatRate);
                         break;
                     default:
-                        throw new ArgumentException(nameof(p));
+                        return (null, AddProductError.PriceVatValuesInvalid);
                 }
+
                 break;
             case > 2:
             {
                 price = Round(p.Price!.Value);
                 vatRate = Round(p.VatRate!.Value);
-                var expectedPriceWithVat = Round(p.PriceWithVat!.Value);
-            
-                var calculatedPriceWithVat = Round(price * (1 + vatRate));
-                if (calculatedPriceWithVat != expectedPriceWithVat) return (null, AddProductError.PriceVatValuesInvalid);
+                priceWithVat = Round(p.PriceWithVat!.Value);
 
-                priceWithVat = calculatedPriceWithVat;
+                var calculatedPriceWithVat = Round(price * (1 + vatRate));
+                if (calculatedPriceWithVat != priceWithVat)
+                {
+                    return (null, AddProductError.PriceVatValuesInvalid);
+                }
+
                 break;
             }
+        }
+
+        if (vatRate is < MinSupportedVatRate or > MaxSupportedVatRate)
+        {
+            return (null, AddProductError.PriceVatValuesInvalid);
         }
 
         var productGroup = await _db.ProductGroups.FindAsync(p.ProductGroupId);
         if (productGroup is null) return (null, AddProductError.ProductGroupInvalid);
 
-        List<Store> stores = new();
-        if (p.StoreIds.Any())
-        {
-            stores = await _db.Stores.Where(x => p.StoreIds.Contains(x.Id)).ToListAsync();
-            if (stores.Count < p.StoreIds.Count) return (null, AddProductError.StoresInvalid);
-        }
+        var stores = p.StoreIds.Any()
+            ? await _db.Stores.Where(x => p.StoreIds.Contains(x.Id)).ToListAsync()
+            : new List<Store>();
+
+        if (stores.Count < p.StoreIds.Count) return (null, AddProductError.StoresInvalid);
 
         var product = new Product
         {

@@ -10,12 +10,15 @@ public class ProductGroupController : ControllerBase
 {
     private readonly IProductGroupService _productGroupService;
 
-    public ProductGroupController(IProductGroupService productGroupService) => _productGroupService = productGroupService;
+    public ProductGroupController(IProductGroupService productGroupService) =>
+        _productGroupService = productGroupService;
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<ProductGroupDto>> GetTree(int id)
+    [HttpGet]
+    public async Task<ActionResult<List<ProductGroupDto>>> GetTree(int? id)
     {
-        var g = await _productGroupService.GetTree(id);
-        return g is null ? NotFound() : g;
+        if (id <= 0) return NotFound();
+        
+        var groups = await _productGroupService.GetTree(id);
+        return groups.Any() ? groups : NotFound();
     }
 }
