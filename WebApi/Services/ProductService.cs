@@ -6,22 +6,16 @@ namespace WebApi.Services;
 
 public class ProductService : IProductService
 {
-    private const decimal MinSupportedVatRate = 0;
+    private const decimal MinSupportedVatRate = 0.01m;
     private const decimal MaxSupportedVatRate = 0.2m;
 
     private readonly EktacoContext _db;
 
     public ProductService(EktacoContext db) => _db = db;
 
-    public async Task<Product?> FindAsync(int id) => await _db.Products
-        .Include(x => x.ProductGroup)
-        .Include(x => x.Stores)
-        .FirstOrDefaultAsync(x => x.Id == id);
+    public async Task<GetProductDto?> GetAsync(int id) => await _db.GetProductQueryable().SingleOrDefaultAsync(x => x.Id == id);
 
-    public async Task<List<Product>> FindAllAsync() => await _db.Products
-        .Include(x => x.ProductGroup)
-        .Include(x => x.Stores)
-        .ToListAsync();
+    public async Task<List<GetProductDto>> GetAllAsync() => await _db.GetProductQueryable().ToListAsync();
 
     public async Task<(int AddedProductId, AddProductError Error)> TryAddAsync(AddProductDto p)
     {
@@ -41,7 +35,7 @@ public class ProductService : IProductService
             return (null, AddProductError.NameInvalid);
         }
 
-        if (p.ProductGroupId <= 0)
+        if (p.GroupId <= 0)
         {
             return (null, AddProductError.ProductGroupInvalid);
         }
@@ -109,7 +103,7 @@ public class ProductService : IProductService
             return (null, AddProductError.PriceVatValuesInvalid);
         }
 
-        var productGroup = await _db.ProductGroups.FindAsync(p.ProductGroupId);
+        var productGroup = await _db.ProductGroups.FindAsync(p.GroupId);
         if (productGroup is null) return (null, AddProductError.ProductGroupInvalid);
 
         var stores = p.StoreIds.Any()

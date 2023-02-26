@@ -11,13 +11,20 @@ public class ProductBaseDto
 
 public class GetProductDto : ProductBaseDto
 {
-    public string ProductGroupName { get; init; } = null!;
-    public List<string> Stores { get; init; } = new();
+    public int Id { get; set; }
+    public string GroupName { get; init; } = null!;
+    public List<StoreDto> Stores { get; init; } = new();
+}
+
+public class StoreDto
+{
+    public int Id { get; init; }
+    public string Name { get; init; } = null!;
 }
 
 public class AddProductDto : ProductBaseDto
 {
-    public int ProductGroupId { get; init; }
+    public int GroupId { get; init; }
     public List<int> StoreIds { get; } = new();
 }
 

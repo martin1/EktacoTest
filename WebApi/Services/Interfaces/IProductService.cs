@@ -7,12 +7,12 @@ public interface IProductService
     /// <summary>
     /// Returns a product by its ID or null if not found
     /// </summary>
-    Task<Product?> FindAsync(int id);
+    Task<GetProductDto?> GetAsync(int id);
 
     /// <summary>
     /// Returns all products
     /// </summary>
-    Task<List<Product>> FindAllAsync();
+    Task<List<GetProductDto>> GetAllAsync();
 
     /// <summary>
     /// Creates a new product. If successful, returns its ID, otherwise returns an error.

@@ -13,6 +13,7 @@ public class EktacoContext : DbContext
 
     public EktacoContext(DbContextOptions options) : base(options)
     {
+        // used by asp.net core - do not remove!
     }
 
     public IQueryable<ProductGroup> GroupTreeQueryable(int id) => ProductGroups.FromSqlRaw(
@@ -31,6 +32,22 @@ public class EktacoContext : DbContext
                 """, id)
         .AsNoTrackingWithIdentityResolution();
 
+    public IQueryable<GetProductDto> GetProductQueryable() => Products
+        .Include(x => x.ProductGroup)
+        .Include(x => x.Stores)
+        .Select(x => new GetProductDto
+        {
+            Id = x.Id,
+            Name = x.Name,
+            GroupName = x.ProductGroup.Name,
+            CreatedAt = x.CreatedAt,
+            Price = x.Price,
+            PriceWithVat = x.PriceWithVat,
+            VatRate = x.VatRate,
+            Stores = x.Stores.Select(y => new StoreDto { Id = y.Id, Name = y.Name }).ToList()
+        })
+        .AsNoTrackingWithIdentityResolution();
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -44,7 +61,7 @@ public class EktacoContext : DbContext
         InsertSampleData(builder);
     }
 
-    private void InsertSampleData(ModelBuilder modelBuilder)
+    private static void InsertSampleData(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<ProductGroup>().HasData(
             new ProductGroup { Id = 1, Name = "Group 1" },

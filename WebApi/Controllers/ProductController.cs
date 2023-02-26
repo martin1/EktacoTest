@@ -19,50 +19,24 @@ public class ProductController : ControllerBase
         {
             case null:
             {
-                var products = await _productService.FindAllAsync();
-                return products.Select(x => new GetProductDto
-                {
-                    Name = x.Name,
-                    ProductGroupName = x.ProductGroup.Name,
-                    CreatedAt = x.CreatedAt,
-                    Price = x.Price,
-                    PriceWithVat = x.PriceWithVat,
-                    VatRate = x.VatRate,
-                    Stores = x.Stores.Select(y => y.Name).ToList()
-                }).ToList();
+                return await _productService.GetAllAsync();
             }
             case <= 0:
                 return NotFound();
         }
 
-        var p = await _productService.FindAsync(id.Value);
-        if (p is null) return NotFound();
-
-        return new List<GetProductDto>
-        {
-            new()
-            {
-                Name = p.Name,
-                ProductGroupName = p.ProductGroup.Name,
-                CreatedAt = p.CreatedAt,
-                Price = p.Price,
-                PriceWithVat = p.PriceWithVat,
-                VatRate = p.VatRate,
-                Stores = p.Stores.Select(x => x.Name).ToList()
-            }
-        };
+        var p = await _productService.GetAsync(id.Value);
+        return p is null 
+            ? NotFound() 
+            : new List<GetProductDto> { p };
     }
 
     [HttpPost]
     public async Task<ActionResult> AddProduct(AddProductDto p)
     {
         var (id, error) = await _productService.TryAddAsync(p);
-
-        if (error is AddProductError.None)
-        {
-            return Ok(new { Id = id });
-        }
-
-        return UnprocessableEntity(error.ToString());
+        return error is AddProductError.None
+            ? Ok(new { Id = id })
+            : UnprocessableEntity(error.ToString());
     }
 }
