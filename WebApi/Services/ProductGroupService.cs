@@ -10,7 +10,7 @@ public class ProductGroupService : IProductGroupService
 
     public ProductGroupService(EktacoContext db) => _db = db;
 
-    public async Task<List<ProductGroupDto>> GetTree(int? id)
+    public async Task<List<ProductGroupDto>> GetTreeAsync(int? id)
     {
         var groups = id > 0
             ? await _db.GroupTreeQueryable(id.Value).Select(x => ToDto(x)).ToListAsync()

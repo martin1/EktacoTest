@@ -26,8 +26,8 @@ public class ProductController : ControllerBase
         }
 
         var p = await _productService.GetAsync(id.Value);
-        return p is null 
-            ? NotFound() 
+        return p is null
+            ? NotFound()
             : new List<GetProductDto> { p };
     }
 
@@ -38,5 +38,13 @@ public class ProductController : ControllerBase
         return error is AddProductError.None
             ? Ok(new { Id = id })
             : UnprocessableEntity(error.ToString());
+    }
+
+    [HttpGet("Store")]
+    public async Task<ActionResult<List<StoreProductDto>>> GetByStore(int storeId)
+    {
+        return storeId <= 0
+            ? NotFound()
+            : await _productService.GetByStore(storeId);
     }
 }

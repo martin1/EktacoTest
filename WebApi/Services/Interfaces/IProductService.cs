@@ -18,4 +18,9 @@ public interface IProductService
     /// Creates a new product. If successful, returns its ID, otherwise returns an error.
     /// </summary>
     Task<(int AddedProductId, AddProductError Error)> TryAddAsync(AddProductDto product);
+
+    /// <summary>
+    /// Returns products that are sold in a particular store
+    /// </summary>
+    Task<List<StoreProductDto>> GetByStore(int storeId);
 }

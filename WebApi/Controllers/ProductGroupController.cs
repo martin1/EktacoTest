@@ -18,7 +18,7 @@ public class ProductGroupController : ControllerBase
     {
         if (id <= 0) return NotFound();
         
-        var groups = await _productGroupService.GetTree(id);
+        var groups = await _productGroupService.GetTreeAsync(id);
         return groups.Any() ? groups : NotFound();
     }
 }

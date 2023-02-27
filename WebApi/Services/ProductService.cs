@@ -28,6 +28,20 @@ public class ProductService : IProductService
         return (product.Id, AddProductError.None);
     }
 
+    public Task<List<StoreProductDto>> GetByStore(int storeId) =>
+        _db.Products
+            .Where(x => x.Stores.Select(y => y.Id).Contains(storeId))
+            .Select(x => new StoreProductDto
+            {
+                Id = x.Id,
+                VatRate = x.VatRate,
+                PriceWithVat = x.PriceWithVat,
+                Price = x.Price,
+                Name = x.Name,
+                GroupName = x.ProductGroup.Name,
+                CreatedAt = x.CreatedAt
+            }).ToListAsync();
+
     private async Task<(Product? Product, AddProductError Error)> ValidateAsync(AddProductDto p)
     {
         if (string.IsNullOrWhiteSpace(p.Name))
