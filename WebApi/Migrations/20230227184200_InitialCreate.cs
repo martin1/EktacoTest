@@ -128,14 +128,26 @@ namespace WebApi.Migrations
                 columns: new[] { "Id", "CreatedAt", "Name", "Price", "PriceWithVat", "ProductGroupId", "VatRate" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2023, 2, 24, 22, 23, 11, 455, DateTimeKind.Local).AddTicks(5980), "Product 1", 0m, 0m, 1, 0m },
-                    { 2, new DateTime(2023, 2, 24, 22, 23, 11, 455, DateTimeKind.Local).AddTicks(5980), "Product 2", 0m, 0m, 1, 0m }
+                    { 1, new DateTime(2023, 2, 27, 20, 42, 0, 855, DateTimeKind.Local).AddTicks(5529), "Product 1", 10.00m, 12.00m, 1, 0.2m },
+                    { 2, new DateTime(2023, 2, 27, 20, 42, 0, 855, DateTimeKind.Local).AddTicks(5529), "Product 2", 5.00m, 6.00m, 1, 0.2m },
+                    { 3, new DateTime(2023, 2, 27, 20, 42, 0, 855, DateTimeKind.Local).AddTicks(5529), "Product 3", 7.35m, 8.82m, 2, 0.2m }
                 });
 
             migrationBuilder.InsertData(
                 table: "ProductGroups",
                 columns: new[] { "Id", "Name", "ParentId" },
-                values: new object[] { 7, "Group 3-7", 3 });
+                values: new object[] { 7, "Group 1-3-7", 3 });
+
+            migrationBuilder.InsertData(
+                table: "Products",
+                columns: new[] { "Id", "CreatedAt", "Name", "Price", "PriceWithVat", "ProductGroupId", "VatRate" },
+                values: new object[,]
+                {
+                    { 4, new DateTime(2023, 2, 27, 20, 42, 0, 855, DateTimeKind.Local).AddTicks(5529), "Product 4", 102.50m, 111.73m, 3, 0.09m },
+                    { 5, new DateTime(2023, 2, 27, 20, 42, 0, 855, DateTimeKind.Local).AddTicks(5529), "Product 5", 24.95m, 29.94m, 4, 0.2m },
+                    { 6, new DateTime(2023, 2, 27, 20, 42, 0, 855, DateTimeKind.Local).AddTicks(5529), "Product 6", 2.10m, 2.52m, 5, 0.2m },
+                    { 7, new DateTime(2023, 2, 27, 20, 42, 0, 855, DateTimeKind.Local).AddTicks(5529), "Product 7", 15.20m, 16.57m, 6, 0.09m }
+                });
 
             migrationBuilder.InsertData(
                 table: "StoreProducts",
@@ -143,7 +155,30 @@ namespace WebApi.Migrations
                 values: new object[,]
                 {
                     { 1, 1 },
-                    { 2, 1 }
+                    { 1, 2 },
+                    { 1, 3 },
+                    { 2, 1 },
+                    { 3, 2 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Products",
+                columns: new[] { "Id", "CreatedAt", "Name", "Price", "PriceWithVat", "ProductGroupId", "VatRate" },
+                values: new object[,]
+                {
+                    { 8, new DateTime(2023, 2, 27, 20, 42, 0, 855, DateTimeKind.Local).AddTicks(5529), "Product 8", 50.00m, 60.00m, 7, 0.2m },
+                    { 9, new DateTime(2023, 2, 27, 20, 42, 0, 855, DateTimeKind.Local).AddTicks(5529), "Product 9", 35.40m, 38.59m, 7, 0.09m }
+                });
+
+            migrationBuilder.InsertData(
+                table: "StoreProducts",
+                columns: new[] { "ProductsId", "StoresId" },
+                values: new object[,]
+                {
+                    { 4, 2 },
+                    { 5, 3 },
+                    { 6, 3 },
+                    { 7, 3 }
                 });
 
             migrationBuilder.CreateIndex(

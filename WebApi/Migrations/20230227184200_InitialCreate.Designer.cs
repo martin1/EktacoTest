@@ -11,7 +11,7 @@ using WebApi.Models;
 namespace WebApi.Migrations
 {
     [DbContext(typeof(EktacoContext))]
-    [Migration("20230224202311_InitialCreate")]
+    [Migration("20230227184200_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -44,6 +44,41 @@ namespace WebApi.Migrations
                         {
                             ProductsId = 2,
                             StoresId = 1
+                        },
+                        new
+                        {
+                            ProductsId = 1,
+                            StoresId = 2
+                        },
+                        new
+                        {
+                            ProductsId = 3,
+                            StoresId = 2
+                        },
+                        new
+                        {
+                            ProductsId = 4,
+                            StoresId = 2
+                        },
+                        new
+                        {
+                            ProductsId = 1,
+                            StoresId = 3
+                        },
+                        new
+                        {
+                            ProductsId = 5,
+                            StoresId = 3
+                        },
+                        new
+                        {
+                            ProductsId = 6,
+                            StoresId = 3
+                        },
+                        new
+                        {
+                            ProductsId = 7,
+                            StoresId = 3
                         });
                 });
 
@@ -82,22 +117,92 @@ namespace WebApi.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2023, 2, 24, 22, 23, 11, 455, DateTimeKind.Local).AddTicks(5980),
+                            CreatedAt = new DateTime(2023, 2, 27, 20, 42, 0, 855, DateTimeKind.Local).AddTicks(5529),
                             Name = "Product 1",
-                            Price = 0m,
-                            PriceWithVat = 0m,
+                            Price = 10.00m,
+                            PriceWithVat = 12.00m,
                             ProductGroupId = 1,
-                            VatRate = 0m
+                            VatRate = 0.2m
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2023, 2, 24, 22, 23, 11, 455, DateTimeKind.Local).AddTicks(5980),
+                            CreatedAt = new DateTime(2023, 2, 27, 20, 42, 0, 855, DateTimeKind.Local).AddTicks(5529),
                             Name = "Product 2",
-                            Price = 0m,
-                            PriceWithVat = 0m,
+                            Price = 5.00m,
+                            PriceWithVat = 6.00m,
                             ProductGroupId = 1,
-                            VatRate = 0m
+                            VatRate = 0.2m
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2023, 2, 27, 20, 42, 0, 855, DateTimeKind.Local).AddTicks(5529),
+                            Name = "Product 3",
+                            Price = 7.35m,
+                            PriceWithVat = 8.82m,
+                            ProductGroupId = 2,
+                            VatRate = 0.2m
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2023, 2, 27, 20, 42, 0, 855, DateTimeKind.Local).AddTicks(5529),
+                            Name = "Product 4",
+                            Price = 102.50m,
+                            PriceWithVat = 111.73m,
+                            ProductGroupId = 3,
+                            VatRate = 0.09m
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(2023, 2, 27, 20, 42, 0, 855, DateTimeKind.Local).AddTicks(5529),
+                            Name = "Product 5",
+                            Price = 24.95m,
+                            PriceWithVat = 29.94m,
+                            ProductGroupId = 4,
+                            VatRate = 0.2m
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CreatedAt = new DateTime(2023, 2, 27, 20, 42, 0, 855, DateTimeKind.Local).AddTicks(5529),
+                            Name = "Product 6",
+                            Price = 2.10m,
+                            PriceWithVat = 2.52m,
+                            ProductGroupId = 5,
+                            VatRate = 0.2m
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CreatedAt = new DateTime(2023, 2, 27, 20, 42, 0, 855, DateTimeKind.Local).AddTicks(5529),
+                            Name = "Product 7",
+                            Price = 15.20m,
+                            PriceWithVat = 16.57m,
+                            ProductGroupId = 6,
+                            VatRate = 0.09m
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CreatedAt = new DateTime(2023, 2, 27, 20, 42, 0, 855, DateTimeKind.Local).AddTicks(5529),
+                            Name = "Product 8",
+                            Price = 50.00m,
+                            PriceWithVat = 60.00m,
+                            ProductGroupId = 7,
+                            VatRate = 0.2m
+                        },
+                        new
+                        {
+                            Id = 9,
+                            CreatedAt = new DateTime(2023, 2, 27, 20, 42, 0, 855, DateTimeKind.Local).AddTicks(5529),
+                            Name = "Product 9",
+                            Price = 35.40m,
+                            PriceWithVat = 38.59m,
+                            ProductGroupId = 7,
+                            VatRate = 0.09m
                         });
                 });
 
@@ -158,7 +263,7 @@ namespace WebApi.Migrations
                         new
                         {
                             Id = 7,
-                            Name = "Group 3-7",
+                            Name = "Group 1-3-7",
                             ParentId = 3
                         });
                 });

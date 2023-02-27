@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApi.Models;
 
@@ -10,9 +11,11 @@ using WebApi.Models;
 namespace WebApi.Migrations
 {
     [DbContext(typeof(EktacoContext))]
-    partial class EktacoContextModelSnapshot : ModelSnapshot
+    [Migration("20230227183705_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.3");
@@ -56,11 +59,6 @@ namespace WebApi.Migrations
                         {
                             ProductsId = 4,
                             StoresId = 2
-                        },
-                        new
-                        {
-                            ProductsId = 1,
-                            StoresId = 3
                         },
                         new
                         {
@@ -114,8 +112,8 @@ namespace WebApi.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2023, 2, 27, 20, 42, 0, 855, DateTimeKind.Local).AddTicks(5529),
-                            Name = "Product 1",
+                            CreatedAt = new DateTime(2023, 2, 27, 20, 37, 5, 192, DateTimeKind.Local).AddTicks(3978),
+                            Name = "P1",
                             Price = 10.00m,
                             PriceWithVat = 12.00m,
                             ProductGroupId = 1,
@@ -124,8 +122,8 @@ namespace WebApi.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2023, 2, 27, 20, 42, 0, 855, DateTimeKind.Local).AddTicks(5529),
-                            Name = "Product 2",
+                            CreatedAt = new DateTime(2023, 2, 27, 20, 37, 5, 192, DateTimeKind.Local).AddTicks(3978),
+                            Name = "P2",
                             Price = 5.00m,
                             PriceWithVat = 6.00m,
                             ProductGroupId = 1,
@@ -134,8 +132,8 @@ namespace WebApi.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2023, 2, 27, 20, 42, 0, 855, DateTimeKind.Local).AddTicks(5529),
-                            Name = "Product 3",
+                            CreatedAt = new DateTime(2023, 2, 27, 20, 37, 5, 192, DateTimeKind.Local).AddTicks(3978),
+                            Name = "P3",
                             Price = 7.35m,
                             PriceWithVat = 8.82m,
                             ProductGroupId = 2,
@@ -144,8 +142,8 @@ namespace WebApi.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2023, 2, 27, 20, 42, 0, 855, DateTimeKind.Local).AddTicks(5529),
-                            Name = "Product 4",
+                            CreatedAt = new DateTime(2023, 2, 27, 20, 37, 5, 192, DateTimeKind.Local).AddTicks(3978),
+                            Name = "P4",
                             Price = 102.50m,
                             PriceWithVat = 111.73m,
                             ProductGroupId = 3,
@@ -154,8 +152,8 @@ namespace WebApi.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2023, 2, 27, 20, 42, 0, 855, DateTimeKind.Local).AddTicks(5529),
-                            Name = "Product 5",
+                            CreatedAt = new DateTime(2023, 2, 27, 20, 37, 5, 192, DateTimeKind.Local).AddTicks(3978),
+                            Name = "P5",
                             Price = 24.95m,
                             PriceWithVat = 29.94m,
                             ProductGroupId = 4,
@@ -164,8 +162,8 @@ namespace WebApi.Migrations
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2023, 2, 27, 20, 42, 0, 855, DateTimeKind.Local).AddTicks(5529),
-                            Name = "Product 6",
+                            CreatedAt = new DateTime(2023, 2, 27, 20, 37, 5, 192, DateTimeKind.Local).AddTicks(3978),
+                            Name = "P6",
                             Price = 2.10m,
                             PriceWithVat = 2.52m,
                             ProductGroupId = 5,
@@ -174,8 +172,8 @@ namespace WebApi.Migrations
                         new
                         {
                             Id = 7,
-                            CreatedAt = new DateTime(2023, 2, 27, 20, 42, 0, 855, DateTimeKind.Local).AddTicks(5529),
-                            Name = "Product 7",
+                            CreatedAt = new DateTime(2023, 2, 27, 20, 37, 5, 192, DateTimeKind.Local).AddTicks(3978),
+                            Name = "P7",
                             Price = 15.20m,
                             PriceWithVat = 16.57m,
                             ProductGroupId = 6,
@@ -184,8 +182,8 @@ namespace WebApi.Migrations
                         new
                         {
                             Id = 8,
-                            CreatedAt = new DateTime(2023, 2, 27, 20, 42, 0, 855, DateTimeKind.Local).AddTicks(5529),
-                            Name = "Product 8",
+                            CreatedAt = new DateTime(2023, 2, 27, 20, 37, 5, 192, DateTimeKind.Local).AddTicks(3978),
+                            Name = "P8",
                             Price = 50.00m,
                             PriceWithVat = 60.00m,
                             ProductGroupId = 7,
@@ -194,8 +192,8 @@ namespace WebApi.Migrations
                         new
                         {
                             Id = 9,
-                            CreatedAt = new DateTime(2023, 2, 27, 20, 42, 0, 855, DateTimeKind.Local).AddTicks(5529),
-                            Name = "Product 9",
+                            CreatedAt = new DateTime(2023, 2, 27, 20, 37, 5, 192, DateTimeKind.Local).AddTicks(3978),
+                            Name = "P9",
                             Price = 35.40m,
                             PriceWithVat = 38.59m,
                             ProductGroupId = 7,
@@ -226,41 +224,41 @@ namespace WebApi.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Group 1"
+                            Name = "G1"
                         },
                         new
                         {
                             Id = 2,
-                            Name = "Group 2"
+                            Name = "G2"
                         },
                         new
                         {
                             Id = 3,
-                            Name = "Group 1-3",
+                            Name = "G1-3",
                             ParentId = 1
                         },
                         new
                         {
                             Id = 4,
-                            Name = "Group 1-4",
+                            Name = "G1-4",
                             ParentId = 1
                         },
                         new
                         {
                             Id = 5,
-                            Name = "Group 2-5",
+                            Name = "G2-5",
                             ParentId = 2
                         },
                         new
                         {
                             Id = 6,
-                            Name = "Group 2-6",
+                            Name = "G2-6",
                             ParentId = 2
                         },
                         new
                         {
                             Id = 7,
-                            Name = "Group 1-3-7",
+                            Name = "G1-3-7",
                             ParentId = 3
                         });
                 });
@@ -283,17 +281,17 @@ namespace WebApi.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Store 1"
+                            Name = "S1"
                         },
                         new
                         {
                             Id = 2,
-                            Name = "Store 2"
+                            Name = "S2"
                         },
                         new
                         {
                             Id = 3,
-                            Name = "Store 3"
+                            Name = "S3"
                         });
                 });
 
