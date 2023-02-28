@@ -1,3 +1,5 @@
+using System.Net.Mime;
+using Microsoft.AspNetCore.Mvc;
 using WebApi.Models;
 using WebApi.Services;
 using WebApi.Services.Interfaces;
@@ -6,7 +8,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add(new ProducesAttribute(MediaTypeNames.Application.Json));
+    options.Filters.Add(new ConsumesAttribute(MediaTypeNames.Application.Json));
+});
 
 var connectionString = builder.Configuration.GetConnectionString("Ektaco");
 builder.Services.AddSqlite<EktacoContext>(connectionString);
