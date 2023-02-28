@@ -25,7 +25,7 @@ public class StoreDto
 public class AddProductDto : ProductDtoBase
 {
     public int GroupId { get; init; }
-    public List<int> StoreIds { get; } = new();
+    public List<int> StoreIds { get; init; } = new();
 }
 
 public class ProductGroupDto

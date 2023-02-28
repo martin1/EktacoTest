@@ -6,7 +6,6 @@ namespace WebApi.Services;
 
 public class ProductService : IProductService
 {
-    private const decimal MinSupportedVatRate = 0.01m;
     private const decimal MaxSupportedVatRate = 0.2m;
 
     private readonly EktacoContext _db;
@@ -59,7 +58,7 @@ public class ProductService : IProductService
             return (null, AddProductError.StoresInvalid);
         }
 
-        if (p.Price <= 0 || p.PriceWithVat <= 0 || p.VatRate < MinSupportedVatRate || p.VatRate > MaxSupportedVatRate)
+        if (p.Price <= 0 || p.PriceWithVat <= 0 || p.VatRate < 0 || p.VatRate > MaxSupportedVatRate)
         {
             return (null, AddProductError.PriceVatValuesInvalid);
         }
@@ -68,7 +67,7 @@ public class ProductService : IProductService
         decimal priceWithVat;
         decimal vatRate;
 
-        var priceVatValues = new[] { p.PriceWithVat, p.Price, p.VatRate }.Count(x => x > 0);
+        var priceVatValues = new[] { p.PriceWithVat, p.Price, p.VatRate }.Count(x => x >= 0);
         switch (priceVatValues)
         {
             case < 2:
@@ -81,15 +80,15 @@ public class ProductService : IProductService
                         price = Round(p.Price.Value);
                         vatRate = Round((priceWithVat - price) / price);
                         break;
-                    case { Price: > 0, VatRate: > 0 }:
+                    case { Price: > 0, VatRate: >= 0 }:
                         price = Round(p.Price.Value);
                         vatRate = Round(p.VatRate.Value);
                         priceWithVat = Round(price * (1 + vatRate));
                         break;
-                    case { PriceWithVat: > 0, VatRate: > 0 }:
+                    case { PriceWithVat: > 0, VatRate: >= 0 }:
                         priceWithVat = Round(p.PriceWithVat.Value);
                         vatRate = Round(p.VatRate.Value);
-                        price = priceWithVat / (1 + vatRate);
+                        price = Round(priceWithVat / (1 + vatRate));
                         break;
                     default:
                         return (null, AddProductError.PriceVatValuesInvalid);
@@ -110,11 +109,6 @@ public class ProductService : IProductService
 
                 break;
             }
-        }
-
-        if (vatRate is < MinSupportedVatRate or > MaxSupportedVatRate)
-        {
-            return (null, AddProductError.PriceVatValuesInvalid);
         }
 
         var productGroup = await _db.ProductGroups.FindAsync(p.GroupId);
